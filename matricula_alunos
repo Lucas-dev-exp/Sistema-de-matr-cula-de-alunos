@@ -1,0 +1,158 @@
+package sistema2;
+
+import java.io.*;
+import java.util.ArrayList;
+import java.util.Scanner;
+
+
+class Aluno implements Serializable {
+	String nome;
+	int idade;
+	
+	
+	Aluno(String nome, int idade) {
+		this.nome = nome;
+		this.idade = idade;
+		
+	}
+	
+}
+
+
+public class matricula {
+   static ArrayList<Aluno> matricula = new ArrayList<>();
+   static final String FILENAME = "matricula.dat";
+	
+	public static void main(String[] args) {
+		carregarMatricula();
+		
+		Scanner scanner = new Scanner(System.in);
+		while (true) {
+			scanner.nextLine(); //dar espaco
+			 System.out.println("==============================");
+			 System.out.println("bem vindo ao sistema");
+	    	 System.out.println("digite a opcao desejada: ");
+	    	 System.out.println("1. cadastrar aluno");
+	    	 System.out.println("2. mostrar alunos ");
+	    	 System.out.println("3. editar aluno ");
+	    	 System.out.println("4. deletar aluno");
+	    	 System.out.println("5. buscar aluno ");
+	    	 System.out.println("6. fechar sistema ");
+	    	 System.out.println("==============================");
+	    	 System.out.println("Nota: para salvar os processos executados, feche o sistema");
+	    	
+	    	 int opcao = scanner.nextInt();
+	    	 scanner.nextLine(); //dar espaco
+	    	 
+	    	 switch (opcao) {
+	    	 case 1: 
+	    		 
+	    		 System.out.println("digite o nome do aluno:");
+	    		 String nome = scanner.nextLine();
+	    		
+	    		 System.out.println("digite a idade do aluno: ");
+	    		 int idade = scanner.nextInt();	 
+	    		 
+	    		 matricula.add(new Aluno(nome, idade));
+	    		 
+	    		 int indice = matricula.size() -1;
+	    		 System.out.println("indice: " + indice);
+	    		 
+	    		 System.out.println("aluno matriculado com sucesso!");
+	    		 scanner.nextLine(); //dar espaco
+	             break;
+	    		 
+	    	 case 2:
+	    		 
+	    		 System.out.println("lista de alunos matriculados:");
+	    		 for (int i = 0; i < matricula.size(); i++) {
+	    			 Aluno aluno = matricula.get(i);
+	    			 System.out.println("indice: " + i + ", nome: " + aluno.nome + ", idade: " + aluno.idade + ""); 
+	    		 }
+	    		 scanner.nextLine(); //dar espaco
+	    		 break;
+	    		 
+	    	 case 3: 
+	    		 
+	    		 System.out.println("digite o indice da pessoa a ser editada: ");
+	    		 int indiceEditar = scanner.nextInt();
+	    		 scanner.nextLine(); //dar espaco
+	    		 if (indiceEditar >= 0 && indiceEditar < matricula.size()) {
+	    			 Aluno a = matricula.get(indiceEditar);
+	    			 System.out.println("digite o novo nome (atual: " + a.nome + "): ");
+	    			 a.nome = scanner.nextLine();
+	    			 System.out.println("digite a nova idade (atual: " + a.idade + "): ");
+	    			 a.idade = scanner.nextInt();
+	    			
+	    			 System.out.println("aluno editado com sucesso! ");
+	    		 } else { 
+	    			 System.out.println("indice invalido!");
+	    		 }
+	    		 scanner.nextLine(); //dar espaco
+	    		 break; 
+	    	 case 4:
+	    		 
+	    		 System.out.println("digite o indice da pessoa a ser deletada: ");
+	    		 int indiceDeletar = scanner.nextInt();
+	    		 scanner.nextLine(); //dar espaco 
+	    		 if (indiceDeletar >= 0 && indiceDeletar < matricula.size()) {
+	    			 matricula.remove(indiceDeletar);
+	    			 System.out.println("aluno deletado com sucesso!");
+	    		 } else { 
+	    			 System.out.println("indice invalido!");
+	    		 }
+	    		 scanner.nextLine(); //dar espaco
+	    		 break;
+	    		 
+	    	 case 5:
+	    		 
+	    		 System.out.println("digite o nome do aluno a ser buscado:");
+	    		 String nomeBusca = scanner.nextLine();
+	    		 boolean encontrado = false; 
+	    		 for (Aluno aluno : matricula) {
+	    			 if (aluno.nome.equalsIgnoreCase(nomeBusca)) {
+	    				 System.out.println("aluno encontrado: nome: " + aluno.nome + ", idade:" + aluno.idade + " " );
+	    				 encontrado = true;
+	    				
+	    			 }
+	    		 }
+	    		 if (!encontrado) {
+	    			 System.out.println("aluno nao encontrado.");
+	    		 }
+	    		 scanner.nextLine(); //dar espaco
+	    		break;
+	    		
+	    	 case 6:
+	    		 
+	    		 salvarMatricula();
+	    		 scanner.close();
+	    		 System.out.println("Sistema encerrado.");
+	    		 return;
+	    		 default:
+	    			 System.out.println("opcao invalida!");
+	    			 scanner.nextLine(); //dar espaco
+	    	 }
+	    	 
+		}
+
+	}
+
+	public static void salvarMatricula() {
+		try (ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(FILENAME))) {
+			out.writeObject(matricula);
+			System.out.println("matricula salva com sucesso!");	
+	} catch (IOException e) {
+		System.out.println("erro ao salvar a matricula");
+		e.printStackTrace();
+	}
+}
+	private static void carregarMatricula() {
+		try (ObjectInputStream in = new ObjectInputStream(new FileInputStream(FILENAME))) {
+			matricula = (ArrayList<Aluno>) in.readObject();
+			System.out.println("matricula carregada com sucesso!");
+		} catch (IOException | ClassNotFoundException e) {
+			System.out.println("nenhuma matricula encontrada ou erro ao carregar matricula");
+		}
+	}
+	
+}
